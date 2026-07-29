@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vendor quotes vs. Ella Song — landed price comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F7F6; --card:#FFFFFF; --ink:#1B2529; --slate:#5C6C74; --faint:#8A979D;
+    --rule:#D6DCD9; --hair:#EDF0EE;
+    --amber:#A9741B; --amber-soft:#F3E7CE; --amber-wash:#FBF6EC;
+    --teal:#1F6E7E; --teal-wash:#EFF5F6;
+    --good:#15706A; --good-soft:#DFEDEB; --over:#A33F32;
+    --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;
+       -webkit-font-smoothing:antialiased;padding:28px 20px 64px}
+  .wrap{max-width:1000px;margin:0 auto}
+
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
+  h1{font-family:var(--mono);font-weight:600;font-size:clamp(24px,4.8vw,36px);letter-spacing:-.02em;margin:0 0 8px}
+  .lede{margin:0 0 26px;color:var(--slate);max-width:58ch}
+  .rule{height:1px;background:var(--rule);margin:0 0 26px}
+
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:20px;margin-bottom:22px}
+  .panel-title{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 16px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .cols > div{min-width:0}
+  .colhead{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+           padding-bottom:9px;margin:0 0 14px;border-bottom:1px solid var(--rule)}
+  .colhead.yours{color:var(--amber)}
+  .colhead.list{color:var(--teal)}
+  .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(126px,1fr));gap:13px 16px}
+  .fields.wide{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+  label{display:block;font-size:12px;font-weight:500;color:var(--slate);margin-bottom:5px}
+  .hint{font-weight:400;color:var(--faint)}
+  input[type=number],input[type=text]{
+    width:100%;font-family:var(--mono);font-size:16px;color:var(--ink);background:var(--paper);
+    border:1px solid var(--rule);border-radius:2px;padding:9px 10px;-moz-appearance:textfield;
+  }
+  input[type=text]{font-family:var(--sans);font-size:15px}
+  input:focus-visible,button:focus-visible,select:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .toggle{display:flex}
+  .toggle button{flex:1;font-family:var(--mono);font-size:12px;padding:10px 6px;background:var(--paper);
+                 color:var(--slate);border:1px solid var(--rule);cursor:pointer}
+  .toggle button:first-child{border-radius:2px 0 0 2px}
+  .toggle button:last-child{border-radius:0 2px 2px 0;border-left:none}
+  .toggle button[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  select{width:100%;font-family:var(--mono);font-size:13px;padding:9px 10px;background:var(--paper);
+         border:1px solid var(--rule);border-radius:2px;color:var(--ink)}
+
+  .saverow{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--rule)}
+  .btn{font-family:var(--mono);font-size:12px;padding:9px 14px;border-radius:2px;cursor:pointer;border:1px solid var(--ink);
+       background:var(--ink);color:var(--paper)}
+  .btn.ghost{background:var(--card);color:var(--ink);border-color:var(--rule)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .flash{font-family:var(--mono);font-size:11px;color:var(--good);opacity:0;transition:opacity .2s}
+  .flash.show{opacity:1}
+  .flash.warn{color:var(--over)}
+
+  .vstrip{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:11px}
+  .vstrip:empty{margin-top:0}
+  .vlbl{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-right:3px}
+  .vchip{font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:12px;cursor:pointer;
+         background:var(--amber-wash);color:var(--amber);border:1px solid var(--amber-soft);max-width:100%;
+         overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .vchip:hover{background:var(--amber-soft)}
+  .vchip.quote{background:var(--teal-wash);color:var(--teal);border-color:#CFE0E3}
+  .vchip.quote:hover{background:#E3EFF1}
+
+  .order-strip{display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px 26px;margin-top:20px;padding-top:18px;border-top:1px dashed var(--rule)}
+  .order-strip .qty{width:130px}
+  .order-note{font-size:12.5px;color:var(--faint);max-width:44ch;margin:0}
+
+  /* head to head */
+  .h2h{border:1px solid var(--rule);border-radius:3px;background:var(--card);margin-bottom:22px;overflow:hidden}
+  .verdict{padding:16px 20px;border-bottom:1px solid var(--rule);background:var(--paper)}
+  .verdict .vline{font-family:var(--mono);font-size:clamp(15px,2.6vw,19px);font-weight:600;letter-spacing:-.01em;margin:0}
+  .verdict .vsub{font-size:13px;color:var(--slate);margin:5px 0 0}
+  .verdict.tie .vline{color:var(--slate)}
+  .verdict.yours .vline{color:var(--amber)}
+  .verdict.ella .vline{color:var(--teal)}
+  .h2h-grid{display:grid;grid-template-columns:minmax(92px,1.15fr) 1fr 1fr}
+  .h2h-grid > div{padding:9px 14px;border-bottom:1px solid var(--hair);min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .h2h-grid .lbl{font-size:12px;color:var(--slate)}
+  .h2h-grid .val{font-family:var(--mono);font-size:13.5px;text-align:right;white-space:nowrap}
+  .h2h-grid .col-y{background:var(--amber-wash)}
+  .h2h-grid .col-e{background:var(--teal-wash)}
+  .h2h-grid .hd{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+                text-align:right;padding-top:13px;padding-bottom:13px;border-bottom:1px solid var(--rule)}
+  .h2h-grid .hd.col-y{color:var(--amber)}
+  .h2h-grid .hd.col-e{color:var(--teal)}
+  .h2h-grid .hd.lbl{text-align:left;color:var(--faint);letter-spacing:.1em}
+  .h2h-grid .key .val,.h2h-grid .key.val{font-size:19px;font-weight:600}
+  .h2h-grid .key.lbl{font-weight:600;color:var(--ink);font-size:12.5px}
+  .h2h-grid .win{position:relative;font-weight:600}
+  .h2h-grid .win::after{content:"\2713";position:absolute;left:10px;top:50%;transform:translateY(-50%);
+                        font-family:var(--mono);font-size:12px;color:var(--good)}
+  .h2h-grid .sep{border-top:1px solid var(--rule)}
+
+  /* meter */
+  .meter-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:14px}
+  .meter-note{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.08em;text-transform:uppercase}
+  .meter{position:relative;height:126px;margin:0 4px}
+  .track{position:absolute;left:0;right:0;top:78px;height:1px;background:var(--rule)}
+  .tick{position:absolute;top:78px;transform:translateX(-50%)}
+  .tick i{display:block;width:1px;height:6px;background:var(--rule);margin:0 auto}
+  .tick span{display:block;font-family:var(--mono);font-size:10px;color:var(--faint);margin-top:5px;white-space:nowrap}
+  .dot{position:absolute;top:78px;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%);border:1.5px solid var(--card)}
+  .dot.picked{width:13px;height:13px;border-width:2px;border-color:var(--ink);z-index:4}
+  .mark{position:absolute;top:56px;width:9px;height:9px;background:var(--amber);transform:translate(-50%,-50%) rotate(45deg);border:1px solid var(--card)}
+  .dot:hover,.mark:hover{z-index:6}
+  .dot .tip,.mark .tip{display:none;position:absolute;bottom:14px;left:50%;background:var(--ink);color:var(--paper);
+       font-family:var(--mono);font-size:10px;padding:3px 6px;border-radius:2px;white-space:nowrap}
+  .dot .tip{transform:translateX(-50%)}
+  .mark .tip{transform:translate(-50%,0) rotate(-45deg);bottom:12px;left:0}
+  .dot:hover .tip,.mark:hover .tip{display:block}
+  .you{position:absolute;top:22px;bottom:34px;width:2px;background:var(--amber);transform:translateX(-50%);transition:left .22s ease}
+  .you b{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:10px;
+         font-weight:600;letter-spacing:.1em;color:var(--amber);background:var(--amber-soft);padding:2px 6px;border-radius:2px;white-space:nowrap}
+  .meter-empty{position:absolute;top:26px;left:0;right:0;text-align:center;font-size:13px;color:var(--faint)}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:6px}
+  .legend span{font-family:var(--mono);font-size:10.5px;color:var(--slate);display:flex;align-items:center;gap:6px}
+  .legend i{width:8px;height:8px;border-radius:50%;display:block}
+  .legend i.diamond{transform:rotate(45deg);border-radius:0;background:var(--amber)}
+
+  /* tables */
+  .table-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+  .sortbar{display:flex}
+  .sortbar button{font-family:var(--mono);font-size:11px;padding:7px 11px;background:var(--card);color:var(--slate);
+                  border:1px solid var(--rule);cursor:pointer}
+  .sortbar button:not(:first-child){border-left:none}
+  .sortbar button[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .scroller{overflow-x:auto;border:1px solid var(--rule);border-radius:3px;background:var(--card)}
+  table{border-collapse:collapse;width:100%}
+  #catalog table{min-width:820px}
+  #library table{min-width:880px}
+  th,td{padding:9px 11px;text-align:right;white-space:nowrap}
+  th:nth-child(1),td:nth-child(1),th:nth-child(2),td:nth-child(2){text-align:left}
+  thead th{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;
+           color:var(--faint);border-bottom:1px solid var(--rule);background:var(--card);position:sticky;top:0}
+  tbody tr{border-bottom:1px solid var(--hair)}
+  tbody tr:last-child{border-bottom:none}
+  tbody tr.picked{background:var(--teal-wash)}
+  tbody tr.active{background:var(--amber-wash)}
+  td.cat{font-family:var(--mono);font-size:12px;font-weight:600}
+  td.name{font-size:13px}
+  td.num{font-family:var(--mono);font-size:13px}
+  td.ship{font-family:var(--mono);font-size:11.5px}
+  td.landed{font-family:var(--mono);font-size:13px;font-weight:600}
+  td.delta{font-family:var(--mono);font-size:13px;font-weight:500}
+  .cheaper{color:var(--good)}
+  .pricier{color:var(--over)}
+  .flat{color:var(--faint)}
+  .waivedtxt{color:var(--good)}
+  .fam{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:8px;vertical-align:1px}
+
+  /* editable cells */
+  .cellinput{
+    width:100%;min-width:58px;font-family:var(--mono);font-size:13px;color:var(--ink);
+    background:transparent;border:1px solid transparent;border-radius:2px;padding:4px 5px;text-align:right;
+    -moz-appearance:textfield;
+  }
+  .cellinput.text{font-family:var(--sans);text-align:left;min-width:96px}
+  .cellinput:hover{border-color:var(--rule)}
+  .cellinput:focus{border-color:var(--amber);background:var(--card);outline:none}
+  .rowbtns{display:flex;gap:6px;justify-content:flex-end}
+  .minibtn{font-family:var(--mono);font-size:11px;padding:5px 9px;border:1px solid var(--rule);background:var(--card);
+           color:var(--slate);border-radius:2px;cursor:pointer}
+  .minibtn.load{color:var(--teal);border-color:#BFD6D9}
+  .minibtn.del{color:var(--over);border-color:#E5CFCA}
+  .minibtn.del.arm{background:var(--over);color:#fff;border-color:var(--over)}
+  .empty{padding:22px;text-align:center;color:var(--faint);font-size:13.5px}
+
+  .foot{margin-top:22px;font-size:12.5px;color:var(--faint);max-width:74ch}
+  .foot p{margin:0 0 7px}
+
+  @media (max-width:640px){ .cols{grid-template-columns:1fr;gap:24px} }
+  @media (max-width:560px){
+    body{padding:20px 14px 48px}
+    .h2h-grid{grid-template-columns:minmax(76px,1fr) 1fr 1fr}
+    .h2h-grid > div{padding:8px 9px}
+    .h2h-grid .val{font-size:12px}
+    .h2h-grid .lbl{font-size:11px}
+    .h2h-grid .key .val,.h2h-grid .key.val{font-size:15px}
+    .h2h-grid .win::after{left:3px;font-size:10px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">Reference list · Ella Song / PPHK · July 2026</p>
+  <h1>Vendor quotes vs. Ella</h1>
+  <p class="lede">Save a quote under a vendor's name, then pull it back any time to hold against the equivalent listed option — both priced all-in, shipping included.</p>
+  <div class="rule"></div>
+
+  <!-- ============ INPUTS ============ -->
+  <section class="panel">
+    <div class="cols">
+
+      <div>
+        <p class="colhead yours">Your vendor</p>
+        <div class="fields wide">
+          <div>
+            <label for="vendor">Vendor name <span class="hint">type or pick</span></label>
+            <input id="vendor" type="text" list="vendorList" placeholder="e.g. Nexus" autocomplete="off">
+            <datalist id="vendorList"></datalist>
+          </div>
+          <div>
+            <label for="product">Peptide <span class="hint">what you're quoting</span></label>
+            <input id="product" type="text" list="peptideList" placeholder="Retatrutide" autocomplete="off">
+            <datalist id="peptideList"></datalist>
+          </div>
+        </div>
+        <div class="vstrip" id="vstrip"></div>
+        <div class="fields" style="margin-top:13px">
+          <div>
+            <label for="mg">mg per vial</label>
+            <input id="mg" type="number" min="0" step="any" inputmode="decimal" placeholder="30">
+          </div>
+          <div>
+            <label for="price">Price in USD</label>
+            <input id="price" type="number" min="0" step="any" inputmode="decimal" placeholder="200">
+          </div>
+          <div>
+            <label id="basisLabel">That price is for</label>
+            <div class="toggle" role="group" aria-labelledby="basisLabel">
+              <button type="button" id="bBox" aria-pressed="true">a box</button>
+              <button type="button" id="bVial" aria-pressed="false">one vial</button>
+            </div>
+          </div>
+          <div id="vialsField">
+            <label for="vials">Vials per box</label>
+            <input id="vials" type="number" min="1" step="1" inputmode="numeric" value="10">
+          </div>
+          <div>
+            <label for="shipYou">Shipping <span class="hint">USD</span></label>
+            <input id="shipYou" type="number" min="0" step="any" inputmode="decimal" placeholder="0">
+          </div>
+          <div>
+            <label for="freeYou">Free over <span class="hint">blank = never</span></label>
+            <input id="freeYou" type="number" min="0" step="any" inputmode="decimal" placeholder="—">
+          </div>
+        </div>
+
+        <div style="margin-top:14px">
+          <label for="saved">Saved quotes</label>
+          <select id="saved"></select>
+        </div>
+
+        <div class="saverow">
+          <button type="button" class="btn" id="saveBtn">Save quote</button>
+          <button type="button" class="btn ghost" id="newBtn" hidden>Save as new</button>
+          <button type="button" class="btn ghost" id="clearBtn">Clear fields</button>
+          <span class="flash" id="flash"></span>
+        </div>
+      </div>
+
+      <div>
+        <p class="colhead list">Ella Song</p>
+        <div>
+          <label for="preset">Peptide in comparison</label>
+          <select id="preset"></select>
+        </div>
+        <div class="fields" style="margin-top:14px">
+          <div>
+            <label for="shipList">Shipping <span class="hint">USD</span></label>
+            <input id="shipList" type="number" min="0" step="any" inputmode="decimal" value="50">
+          </div>
+          <div>
+            <label for="freeList">Free over <span class="hint">USD</span></label>
+            <input id="freeList" type="number" min="0" step="any" inputmode="decimal" value="400">
+          </div>
+        </div>
+        <div class="order-strip" style="margin-top:16px">
+          <div class="qty">
+            <label for="qty">Boxes in the order</label>
+            <input id="qty" type="number" min="1" step="1" inputmode="numeric" value="1">
+          </div>
+          <p class="order-note">Applied to both sides. More boxes spreads one shipping charge further — and can clear a free-shipping threshold.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ HEAD TO HEAD ============ -->
+  <section class="h2h">
+    <div class="verdict tie" id="verdict">
+      <p class="vline" id="verdictLine">Enter your vendor's numbers to compare</p>
+      <p class="vsub" id="verdictSub">Both sides are priced for the same number of boxes, shipping included.</p>
+    </div>
+    <div id="h2h"></div>
+  </section>
+
+  <!-- ============ LIBRARY ============ -->
+  <section id="library" style="margin-bottom:22px">
+    <div class="table-head">
+      <p class="panel-title" style="margin:0">Saved quotes <span class="hint" id="countTag"></span></p>
+      <div class="sortbar" role="group" aria-label="Library sort">
+        <button type="button" data-lsort="added" aria-pressed="true">Order added</button>
+        <button type="button" data-lsort="vendor" aria-pressed="false">By vendor</button>
+        <button type="button" data-lsort="permg" aria-pressed="false">Cheapest landed</button>
+      </div>
+    </div>
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Vendor</th>
+            <th scope="col">Peptide</th>
+            <th scope="col">mg/vial</th>
+            <th scope="col">Vials</th>
+            <th scope="col">Box price</th>
+            <th scope="col">Shipping</th>
+            <th scope="col">Free over</th>
+            <th scope="col">Landed $/mg</th>
+            <th scope="col">vs. Ella</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody id="libRows"></tbody>
+      </table>
+    </div>
+    <p class="foot" style="margin-top:10px">Every figure here is editable — type over it and the change is kept. Landed $/mg reflects the box count and the peptide currently selected on the Ella side.</p>
+  </section>
+
+  <!-- ============ METER ============ -->
+  <section class="panel">
+    <div class="meter-head">
+      <p class="panel-title" style="margin:0">The whole field, all-in</p>
+      <span class="meter-note">Log scale · landed $/mg</span>
+    </div>
+    <div class="meter" id="meter"></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <!-- ============ CATALOG ============ -->
+  <section id="catalog">
+    <div class="table-head">
+      <p class="panel-title" style="margin:0">Ella's list vs. the quote on screen</p>
+      <div class="sortbar" role="group" aria-label="Catalog sort">
+        <button type="button" data-sort="list" aria-pressed="true">List order</button>
+        <button type="button" data-sort="permg" aria-pressed="false">Cheapest landed</button>
+        <button type="button" data-sort="delta" aria-pressed="false">Biggest gap</button>
+      </div>
+    </div>
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Cat.</th>
+            <th scope="col">Product</th>
+            <th scope="col">mg/vial</th>
+            <th scope="col">Goods</th>
+            <th scope="col">Shipping</th>
+            <th scope="col">Order total</th>
+            <th scope="col">Landed $/mg</th>
+            <th scope="col">Δ $/mg vs you</th>
+            <th scope="col">Δ $ at equal mg</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="foot">
+      <p><span class="cheaper">Green</span> means the listed option is cheaper than your quote. <span class="pricier">Red</span> means yours is the better price.</p>
+      <p>Shipping is counted once per order, not once per box.</p>
+      <p>List terms as printed: $50 shipping, waived over $400, minimum one box. BB30 is listed as 30 mg × 11 vials, not 10.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ============ reference data ============ */
+const FAM = {
+  reta:{name:"Retatrutide", color:"#2F5D8A"},
+  mots:{name:"MOTS-c",      color:"#3E8E7E"},
+  tesa:{name:"Tesamorelin", color:"#B4553F"},
+  wolv:{name:"Wolverine",   color:"#7A5C99"},
+  ghk: {name:"GHK-Cu",      color:"#C9A227"},
+  cjc: {name:"CJC/IPA",     color:"#5A6672"}
+};
+
+const LIST = [
+  ["RT5","Retatrutide","reta",5,10,80],
+  ["RT10","Retatrutide","reta",10,10,120],
+  ["RT15","Retatrutide","reta",15,10,140],
+  ["RT20","Retatrutide","reta",20,10,180],
+  ["RT30","Retatrutide","reta",30,10,200],
+  ["RT40","Retatrutide","reta",40,10,230],
+  ["RT60","Retatrutide","reta",60,10,290],
+  ["MS10","MOTS-c","mots",10,10,75],
+  ["MS20","MOTS-c","mots",20,10,135],
+  ["MS40","MOTS-c","mots",40,10,220],
+  ["TSM5","Tesamorelin","tesa",5,10,100],
+  ["TSM10","Tesamorelin","tesa",10,10,170],
+  ["TSM20","Tesamorelin","tesa",20,10,300],
+  ["BB10","Wolverine \u2014 BPC 5 + TB 5","wolv",10,10,115],
+  ["BB20","Wolverine \u2014 BPC 10 + TB 10","wolv",20,10,190],
+  ["BB30","Wolverine \u2014 BPC 15 + TB 15","wolv",30,11,280],
+  ["CU50","GHK-Cu","ghk",50,10,32],
+  ["CU100","GHK-Cu","ghk",100,10,60],
+  ["CP10","CJC-1295 + Ipamorelin","cjc",10,10,110]
+].map(function(r,i){
+  return { cat:r[0], name:r[1], fam:r[2], mg:r[3], vials:r[4], box:r[5], order:i, mgPerBox:r[3]*r[4] };
+});
+
+const $ = function(id){ return document.getElementById(id); };
+const el = {
+  vendor:$("vendor"), product:$("product"),
+  vendorList:$("vendorList"), peptideList:$("peptideList"), vstrip:$("vstrip"),
+  mg:$("mg"), price:$("price"), vials:$("vials"), vialsField:$("vialsField"),
+  shipYou:$("shipYou"), freeYou:$("freeYou"),
+  shipList:$("shipList"), freeList:$("freeList"), qty:$("qty"),
+  bBox:$("bBox"), bVial:$("bVial"),
+  saved:$("saved"), saveBtn:$("saveBtn"), newBtn:$("newBtn"), clearBtn:$("clearBtn"), flash:$("flash"),
+  preset:$("preset"),
+  verdict:$("verdict"), verdictLine:$("verdictLine"), verdictSub:$("verdictSub"), h2h:$("h2h"),
+  meter:$("meter"), legend:$("legend"), rows:$("rows"),
+  libRows:$("libRows"), countTag:$("countTag")
+};
+
+let basis = "box";
+let sortMode = "list";
+let libSort = "added";
+let quotes = [];
+let activeId = null;
+let storageOK = true;
+
+/* ============ formatting ============ */
+const money    = function(n){ return "$" + n.toFixed(2); };
+const money0   = function(n){ return "$" + n.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2}); };
+const perMgFmt = function(n){ return n < 0.1 ? "$" + n.toFixed(3) : "$" + n.toFixed(2); };
+const signed   = function(n,fmt){ return (n > 0 ? "+" : n < 0 ? "\u2212" : "") + fmt(Math.abs(n)); };
+const num      = function(input,fallback){ const v = parseFloat(input.value); return isFinite(v) && v >= 0 ? v : fallback; };
+const thresholdOf = function(input){ const v = parseFloat(input.value); return isFinite(v) && v > 0 ? v : null; };
+const esc = function(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+};
+
+function shippingOn(subtotal, cost, threshold){
+  if (!(cost > 0)) return 0;
+  if (threshold !== null && subtotal >= threshold) return 0;
+  return cost;
+}
+function orderQty(){ return Math.max(1, parseInt(el.qty.value, 10) || 1); }
+
+/* ============ persistence ============ */
+const STORE_KEY = "vendor-quotes:v1";
+const hasStore = typeof window !== "undefined" && window.storage && typeof window.storage.get === "function";
+
+function flash(msg, warn){
+  el.flash.textContent = msg;
+  el.flash.className = "flash show" + (warn ? " warn" : "");
+  setTimeout(function(){ el.flash.className = "flash" + (warn ? " warn" : ""); }, 2200);
+}
+
+async function loadQuotes(){
+  if (!hasStore){ storageOK = false; return; }
+  try{
+    const r = await window.storage.get(STORE_KEY);
+    quotes = r && r.value ? JSON.parse(r.value) : [];
+  }catch(e){
+    quotes = [];           /* first run: key does not exist yet */
+  }
+}
+
+async function persist(){
+  if (!hasStore){ storageOK = false; flash("Kept for this session only", true); return; }
+  try{
+    await window.storage.set(STORE_KEY, JSON.stringify(quotes));
+    storageOK = true;
+    flash("Saved");
+  }catch(e){
+    storageOK = false;
+    flash("Could not save \u2014 session only", true);
+  }
+}
+
+/* ============ reading the form ============ */
+function readQuote(){
+  const mg = parseFloat(el.mg.value);
+  const price = parseFloat(el.price.value);
+  const vials = Math.max(1, parseInt(el.vials.value, 10) || 1);
+  if (!(mg > 0) || !(price > 0)) return null;
+
+  const qty = orderQty();
+  const perVial = basis === "box" ? price / vials : price;
+  const boxPrice = perVial * vials;
+  const goods = boxPrice * qty;
+  const ship = shippingOn(goods, num(el.shipYou, 0), thresholdOf(el.freeYou));
+  const totalMg = mg * vials * qty;
+
+  return { vendor:el.vendor.value.trim(), product:el.product.value.trim(),
+           mg:mg, vials:vials, qty:qty, perVial:perVial, boxPrice:boxPrice,
+           goods:goods, ship:ship, total:goods + ship, totalMg:totalMg,
+           perMg:(goods + ship) / totalMg };
+}
+
+/* landed economics for a stored quote record */
+function priceRecord(rec, qty){
+  const goods = rec.boxPrice * qty;
+  const ship = shippingOn(goods, rec.ship || 0, rec.free > 0 ? rec.free : null);
+  const totalMg = rec.mg * rec.vials * qty;
+  return { goods:goods, ship:ship, total:goods + ship, totalMg:totalMg,
+           perVial:rec.boxPrice / rec.vials, perMg:(goods + ship) / totalMg };
+}
+
+function priceOption(o, qty){
+  const goods = o.box * qty;
+  const ship = shippingOn(goods, num(el.shipList, 0), thresholdOf(el.freeList));
+  const totalMg = o.mgPerBox * qty;
+  return { goods:goods, ship:ship, total:goods + ship, totalMg:totalMg,
+           perVial:o.box / o.vials, perMg:(goods + ship) / totalMg };
+}
+
+function pickedIndex(){
+  const v = parseInt(el.preset.value, 10);
+  return isFinite(v) ? v : 4;
+}
+
+/* ============ head to head ============ */
+function row(label, yours, ella, opts){
+  opts = opts || {};
+  const k = opts.key ? " key" : "";
+  const sep = opts.sep ? " sep" : "";
+  const wY = opts.winner === "y" ? " win" : "";
+  const wE = opts.winner === "e" ? " win" : "";
+  return '<div class="lbl' + k + sep + '">' + label + "</div>" +
+         '<div class="val col-y' + k + sep + wY + '">' + yours + "</div>" +
+         '<div class="val col-e' + k + sep + wE + '">' + ella + "</div>";
+}
+
+function paintH2H(q, o, p){
+  const yourTitle = q && q.vendor ? esc(q.vendor) : "Your vendor";
+  const head = '<div class="hd lbl">Metric</div>' +
+               '<div class="hd col-y">' + yourTitle + "</div>" +
+               '<div class="hd col-e">' + o.cat + "</div>";
+
+  if (!q){
+    el.h2h.innerHTML = '<div class="h2h-grid">' + head +
+      row("Peptide", "\u2014", o.name) +
+      row("mg per vial", "\u2014", o.mg + " mg") +
+      row("Price per box", "\u2014", money0(o.box)) +
+      row("Order total", "\u2014", money0(p.total)) +
+      row("Landed cost per mg", "\u2014", perMgFmt(p.perMg), {key:true, sep:true}) +
+      "</div>";
+    el.verdict.className = "verdict tie";
+    el.verdictLine.textContent = "Enter your vendor's numbers to compare";
+    el.verdictSub.textContent = "Both sides are priced for the same number of boxes, shipping included.";
+    return;
+  }
+
+  const cheaperRate = q.perMg < p.perMg ? "y" : p.perMg < q.perMg ? "e" : null;
+  const cheaperShip = q.ship < p.ship ? "y" : p.ship < q.ship ? "e" : null;
+  const cheaperVial = q.perVial < p.perVial ? "y" : p.perVial < q.perVial ? "e" : null;
+
+  const basisMg = q.totalMg;
+  const yourMatched = basisMg * q.perMg;
+  const ellaMatched = basisMg * p.perMg;
+  const matchWinner = yourMatched < ellaMatched ? "y" : ellaMatched < yourMatched ? "e" : null;
+
+  el.h2h.innerHTML = '<div class="h2h-grid">' + head +
+    row("Peptide", q.product ? esc(q.product) : "your quote", o.name) +
+    row("mg per vial", q.mg + " mg", o.mg + " mg") +
+    row("Vials per box", String(q.vials), String(o.vials)) +
+    row("Price per box", money0(q.boxPrice), money0(o.box)) +
+    row("Cost per vial", money(q.perVial), money(p.perVial), {winner:cheaperVial}) +
+    row("Goods subtotal", money0(q.goods), money0(p.goods), {sep:true}) +
+    row("Shipping", q.ship > 0 ? money0(q.ship) : "waived", p.ship > 0 ? money0(p.ship) : "waived", {winner:cheaperShip}) +
+    row("Order total", money0(q.total), money0(p.total)) +
+    row("Total mg", q.totalMg.toLocaleString() + " mg", p.totalMg.toLocaleString() + " mg") +
+    row("Landed cost per mg", perMgFmt(q.perMg), perMgFmt(p.perMg), {key:true, sep:true, winner:cheaperRate}) +
+    row("Cost for " + basisMg.toLocaleString() + " mg", money0(yourMatched), money0(ellaMatched), {winner:matchWinner}) +
+    "</div>";
+
+  const gapMg = Math.abs(q.perMg - p.perMg);
+  const gapDollars = Math.abs(yourMatched - ellaMatched);
+  const pct = gapMg / Math.max(q.perMg, p.perMg) * 100;
+  const who = q.vendor ? esc(q.vendor) : "Your vendor";
+
+  if (!cheaperRate || pct < 0.5){
+    el.verdict.className = "verdict tie";
+    el.verdictLine.textContent = "Effectively a tie";
+    el.verdictSub.textContent = "Both land within half a percent of " + perMgFmt(p.perMg) + " per mg.";
+  } else if (cheaperRate === "e"){
+    el.verdict.className = "verdict ella";
+    el.verdictLine.textContent = o.cat + " is cheaper by " + perMgFmt(gapMg) + " per mg";
+    el.verdictSub.textContent = money0(gapDollars) + " on " + basisMg.toLocaleString() +
+      " mg \u2014 about " + pct.toFixed(0) + "% below " + who + ", landed.";
+  } else {
+    el.verdict.className = "verdict yours";
+    el.verdictLine.textContent = who + " is cheaper by " + perMgFmt(gapMg) + " per mg";
+    el.verdictSub.textContent = money0(gapDollars) + " on " + basisMg.toLocaleString() +
+      " mg \u2014 about " + pct.toFixed(0) + "% below " + o.cat + ", landed.";
+  }
+}
+
+/* ============ meter ============ */
+const TICKS = [0.05, 0.1, 0.25, 0.5, 1, 2, 4];
+const LO = Math.log10(0.04), HI = Math.log10(5);
+function pos(v){
+  const p = (Math.log10(Math.min(Math.max(v, 0.04), 5)) - LO) / (HI - LO);
+  return (2 + p * 96).toFixed(2) + "%";
+}
+function paintMeter(q, priced, pickIdx, qty){
+  let html = '<div class="track"></div>';
+  TICKS.forEach(function(t){
+    html += '<div class="tick" style="left:' + pos(t) + '"><i></i><span>' +
+            (t < 0.1 ? "$" + t.toFixed(2) : "$" + t) + "</span></div>";
+  });
+  LIST.forEach(function(o, i){
+    const p = priced[i];
+    html += '<div class="dot' + (i === pickIdx ? " picked" : "") + '" style="left:' + pos(p.perMg) +
+            ";background:" + FAM[o.fam].color + '"><span class="tip">' + o.cat + " \u00b7 " +
+            perMgFmt(p.perMg) + "/mg landed</span></div>";
+  });
+  quotes.forEach(function(rec){
+    const p = priceRecord(rec, qty);
+    html += '<div class="mark" style="left:' + pos(p.perMg) + '"><span class="tip">' +
+            esc(rec.vendor || "unnamed") + " \u00b7 " + perMgFmt(p.perMg) + "/mg</span></div>";
+  });
+  html += q
+    ? '<div class="you" style="left:' + pos(q.perMg) + '"><b>ON SCREEN ' + perMgFmt(q.perMg) + "</b></div>"
+    : '<div class="meter-empty">Enter a price to place your marker.</div>';
+  el.meter.innerHTML = html;
+}
+function paintLegend(){
+  el.legend.innerHTML = Object.keys(FAM).map(function(k){
+    return '<span><i style="background:' + FAM[k].color + '"></i>' + FAM[k].name + "</span>";
+  }).join("") + '<span><i class="diamond"></i>Saved quotes</span>';
+}
+
+/* ============ library ============ */
+function paintLibrary(qty, ellaP, ellaCat){
+  el.countTag.textContent = quotes.length
+    ? "\u00b7 " + quotes.length + (quotes.length === 1 ? " quote" : " quotes") + (storageOK ? "" : " \u00b7 not persisted")
+    : "";
+
+  if (!quotes.length){
+    el.libRows.innerHTML = '<tr><td colspan="10" class="empty">' +
+      "No quotes saved yet. Fill in a vendor name and price above, then choose Save quote." +
+      "</td></tr>";
+    return;
+  }
+
+  let list = quotes.map(function(rec, i){ return { rec:rec, i:i, p:priceRecord(rec, qty) }; });
+  if (libSort === "vendor") list.sort(function(a,b){
+    return (a.rec.vendor || "").localeCompare(b.rec.vendor || "") || (a.rec.product || "").localeCompare(b.rec.product || "");
+  });
+  if (libSort === "permg") list.sort(function(a,b){ return a.p.perMg - b.p.perMg; });
+
+  el.libRows.innerHTML = list.map(function(r){
+    const rec = r.rec, p = r.p;
+    const gap = p.perMg - ellaP.perMg;
+    const cls = gap < -0.0005 ? "cheaper" : gap > 0.0005 ? "pricier" : "flat";
+    const field = function(key, val, type){
+      return '<input class="cellinput' + (type === "text" ? " text" : "") + '" data-id="' + rec.id +
+             '" data-key="' + key + '" type="' + (type === "text" ? "text" : "number") +
+             '" value="' + esc(val === null || val === undefined ? "" : val) +
+             (type === "text" ? '"' : '" min="0" step="any" inputmode="decimal"') + ">";
+    };
+    return '<tr' + (rec.id === activeId ? ' class="active"' : "") + ">" +
+      "<td>" + field("vendor", rec.vendor, "text") + "</td>" +
+      "<td>" + field("product", rec.product, "text") + "</td>" +
+      "<td>" + field("mg", rec.mg) + "</td>" +
+      "<td>" + field("vials", rec.vials) + "</td>" +
+      "<td>" + field("boxPrice", rec.boxPrice) + "</td>" +
+      "<td>" + field("ship", rec.ship) + "</td>" +
+      "<td>" + field("free", rec.free) + "</td>" +
+      '<td class="landed">' + perMgFmt(p.perMg) + "</td>" +
+      '<td class="delta ' + cls + '">' + signed(gap, perMgFmt) + "</td>" +
+      '<td><div class="rowbtns">' +
+        '<button type="button" class="minibtn load" data-load="' + rec.id + '">Load</button>' +
+        '<button type="button" class="minibtn del" data-del="' + rec.id + '">\u00d7</button>' +
+      "</div></td>" +
+    "</tr>";
+  }).join("");
+}
+
+/* ============ catalog ============ */
+function paintTable(q, priced, pickIdx){
+  let idx = LIST.map(function(o, i){ return { o:o, p:priced[i], i:i }; });
+  if (sortMode === "permg") idx.sort(function(a,b){ return a.p.perMg - b.p.perMg; });
+  if (sortMode === "delta" && q) idx.sort(function(a,b){
+    return Math.abs(b.p.perMg - q.perMg) - Math.abs(a.p.perMg - q.perMg);
+  });
+  if (sortMode === "list") idx.sort(function(a,b){ return a.o.order - b.o.order; });
+
+  el.rows.innerHTML = idx.map(function(r){
+    const o = r.o, p = r.p;
+    let dMg = '<td class="delta flat">\u2014</td>';
+    let dBox = '<td class="delta flat">\u2014</td>';
+    if (q){
+      const gapMg = p.perMg - q.perMg;
+      const gapBox = p.total - (p.totalMg * q.perMg);
+      const cls = function(v){ return v < -0.0005 ? "cheaper" : v > 0.0005 ? "pricier" : "flat"; };
+      dMg  = '<td class="delta ' + cls(gapMg) + '">' + signed(gapMg, perMgFmt) + "</td>";
+      dBox = '<td class="delta ' + cls(gapBox) + '">' + signed(gapBox, money) + "</td>";
+    }
+    const shipCell = p.ship > 0
+      ? '<td class="ship">+' + money0(p.ship) + "</td>"
+      : '<td class="ship waivedtxt">waived</td>';
+
+    return '<tr' + (r.i === pickIdx ? ' class="picked"' : "") + ">" +
+      '<td class="cat">' + o.cat + "</td>" +
+      '<td class="name"><i class="fam" style="background:' + FAM[o.fam].color + '"></i>' + o.name + "</td>" +
+      '<td class="num">' + o.mg + "</td>" +
+      '<td class="num">' + money0(p.goods) + "</td>" +
+      shipCell +
+      '<td class="num">' + money0(p.total) + "</td>" +
+      '<td class="landed">' + perMgFmt(p.perMg) + "</td>" +
+      dMg + dBox +
+    "</tr>";
+  }).join("");
+}
+
+/* ============ vendor suggestions ============ */
+function uniq(values){
+  const seen = {}, out = [];
+  values.forEach(function(v){
+    const k = String(v || "").trim().toLowerCase();
+    if (!k || seen[k]) return;
+    seen[k] = true;
+    out.push(String(v).trim());
+  });
+  return out;
+}
+
+function knownVendors(){
+  return uniq(quotes.map(function(r){ return r.vendor; })
+                    .filter(function(v){ return v && v !== "unnamed"; }));
+}
+
+function paintVendorAids(){
+  const vendors = knownVendors();
+  el.vendorList.innerHTML = vendors.map(function(v){
+    return '<option value="' + esc(v) + '"></option>';
+  }).join("");
+
+  const peptides = uniq(quotes.map(function(r){ return r.product; })
+                              .concat(LIST.map(function(o){ return o.name; })));
+  el.peptideList.innerHTML = peptides.map(function(p){
+    return '<option value="' + esc(p) + '"></option>';
+  }).join("");
+
+  const typed = el.vendor.value.trim().toLowerCase();
+  const theirs = typed
+    ? quotes.filter(function(r){ return String(r.vendor || "").trim().toLowerCase() === typed; })
+    : [];
+
+  if (theirs.length){
+    el.vstrip.innerHTML = '<span class="vlbl">Saved for this vendor</span>' +
+      theirs.map(function(r){
+        return '<button type="button" class="vchip quote" data-load-id="' + esc(r.id) + '">' +
+               esc(r.product || "?") + " \u00b7 " + r.mg + " mg \u00b7 " + money0(r.boxPrice) + "</button>";
+      }).join("");
+  } else if (vendors.length){
+    el.vstrip.innerHTML = '<span class="vlbl">Previously used</span>' +
+      vendors.map(function(v){
+        return '<button type="button" class="vchip" data-vendor="' + esc(v) + '">' + esc(v) + "</button>";
+      }).join("");
+  } else {
+    el.vstrip.innerHTML = "";
+  }
+}
+
+/* ============ saved-quote dropdown ============ */
+function paintSavedSelect(){
+  const opts = ['<option value="">New quote \u2014 nothing loaded</option>'].concat(
+    quotes.map(function(rec){
+      const label = (rec.vendor || "unnamed") + " \u2014 " + (rec.product || "?") +
+                    " \u00b7 " + rec.mg + " mg \u00b7 " + money0(rec.boxPrice);
+      return '<option value="' + rec.id + '">' + esc(label) + "</option>";
+    })
+  );
+  el.saved.innerHTML = opts.join("");
+  el.saved.value = activeId || "";
+  el.saveBtn.textContent = activeId ? "Update quote" : "Save quote";
+  el.newBtn.hidden = !activeId;
+}
+
+/* ============ orchestration ============ */
+function render(){
+  const qty = orderQty();
+  const priced = LIST.map(function(o){ return priceOption(o, qty); });
+  const q = readQuote();
+  const pick = pickedIndex();
+  paintVendorAids();
+  paintH2H(q, LIST[pick], priced[pick]);
+  paintLibrary(qty, priced[pick], LIST[pick].cat);
+  paintMeter(q, priced, pick, qty);
+  paintTable(q, priced, pick);
+}
+
+/* ---- inputs ---- */
+[el.vendor, el.product, el.mg, el.price, el.vials, el.shipYou, el.freeYou,
+ el.shipList, el.freeList, el.qty].forEach(function(i){ i.addEventListener("input", render); });
+
+function setBasis(next){
+  basis = next;
+  el.bBox.setAttribute("aria-pressed", String(next === "box"));
+  el.bVial.setAttribute("aria-pressed", String(next === "vial"));
+  el.vialsField.style.opacity = next === "box" ? "1" : ".45";
+  render();
+}
+el.bBox.addEventListener("click", function(){ setBasis("box"); });
+el.bVial.addEventListener("click", function(){ setBasis("vial"); });
+
+/* ---- Ella peptide selector ---- */
+el.preset.innerHTML = LIST.map(function(o, i){
+  return '<option value="' + i + '"' + (i === 4 ? " selected" : "") + ">" +
+         o.cat + " \u2014 " + o.name + " \u00b7 " + o.mg + " mg \u00b7 $" + o.box + "</option>";
+}).join("");
+el.preset.addEventListener("change", render);
+
+/* ---- saving ---- */
+function formToRecord(id){
+  const q = readQuote();
+  if (!q) return null;
+  return {
+    id: id || ("q" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6)),
+    vendor: el.vendor.value.trim() || "unnamed",
+    product: el.product.value.trim() || LIST[pickedIndex()].name,
+    mg: q.mg,
+    vials: q.vials,
+    boxPrice: Math.round(q.boxPrice * 100) / 100,
+    ship: num(el.shipYou, 0),
+    free: thresholdOf(el.freeYou) || 0
+  };
+}
+
+el.saveBtn.addEventListener("click", async function(){
+  const rec = formToRecord(activeId);
+  if (!rec){ flash("Enter mg and a price first", true); return; }
+  const at = quotes.findIndex(function(x){ return x.id === rec.id; });
+  if (at >= 0) quotes[at] = rec; else quotes.push(rec);
+  activeId = rec.id;
+  paintSavedSelect();
+  render();
+  await persist();
+});
+
+el.newBtn.addEventListener("click", async function(){
+  const rec = formToRecord(null);
+  if (!rec){ flash("Enter mg and a price first", true); return; }
+  quotes.push(rec);
+  activeId = rec.id;
+  paintSavedSelect();
+  render();
+  await persist();
+});
+
+el.clearBtn.addEventListener("click", function(){
+  activeId = null;
+  el.vendor.value = ""; el.product.value = "";
+  el.mg.value = ""; el.price.value = "";
+  el.vials.value = "10"; el.shipYou.value = ""; el.freeYou.value = "";
+  setBasis("box");
+  paintSavedSelect();
+  render();
+});
+
+function loadRecord(id){
+  const rec = quotes.filter(function(x){ return x.id === id; })[0];
+  if (!rec) return;
+  activeId = rec.id;
+  setBasis("box");
+  el.vendor.value = rec.vendor === "unnamed" ? "" : rec.vendor;
+  el.product.value = rec.product;
+  el.mg.value = rec.mg;
+  el.price.value = rec.boxPrice;
+  el.vials.value = rec.vials;
+  el.shipYou.value = rec.ship || "";
+  el.freeYou.value = rec.free || "";
+  paintSavedSelect();
+  render();
+}
+
+el.vstrip.addEventListener("click", function(e){
+  const v = e.target.getAttribute("data-vendor");
+  const id = e.target.getAttribute("data-load-id");
+  if (v){
+    el.vendor.value = v;
+    el.vendor.focus();
+    render();
+    return;
+  }
+  if (id) loadRecord(id);
+});
+
+el.saved.addEventListener("change", function(e){
+  if (!e.target.value){ activeId = null; paintSavedSelect(); render(); return; }
+  loadRecord(e.target.value);
+});
+
+/* ---- library interactions ---- */
+el.libRows.addEventListener("input", async function(e){
+  const t = e.target;
+  if (!t.classList.contains("cellinput")) return;
+  const rec = quotes.filter(function(x){ return x.id === t.dataset.id; })[0];
+  if (!rec) return;
+  const key = t.dataset.key;
+  if (key === "vendor" || key === "product"){
+    rec[key] = t.value;
+  } else {
+    const v = parseFloat(t.value);
+    rec[key] = isFinite(v) && v >= 0 ? v : 0;
+    if (key === "vials") rec.vials = Math.max(1, Math.round(rec.vials) || 1);
+  }
+  const qty = orderQty();
+  const priced = LIST.map(function(o){ return priceOption(o, qty); });
+  const pick = pickedIndex();
+  /* refresh derived views without stealing focus from the cell being typed in */
+  paintMeter(readQuote(), priced, pick, qty);
+  paintSavedSelect();
+  const rowEl = t.closest("tr");
+  if (rowEl){
+    const p = priceRecord(rec, qty);
+    const gap = p.perMg - priced[pick].perMg;
+    const cells = rowEl.querySelectorAll("td");
+    cells[7].textContent = perMgFmt(p.perMg);
+    cells[8].textContent = signed(gap, perMgFmt);
+    cells[8].className = "delta " + (gap < -0.0005 ? "cheaper" : gap > 0.0005 ? "pricier" : "flat");
+  }
+  await persist();
+});
+
+let armed = null;
+el.libRows.addEventListener("click", async function(e){
+  const loadId = e.target.getAttribute("data-load");
+  const delId = e.target.getAttribute("data-del");
+  if (loadId){ loadRecord(loadId); return; }
+  if (delId){
+    if (armed !== delId){
+      armed = delId;
+      e.target.classList.add("arm");
+      e.target.textContent = "Delete?";
+      setTimeout(function(){
+        if (armed === delId){
+          armed = null;
+          e.target.classList.remove("arm");
+          e.target.textContent = "\u00d7";
+        }
+      }, 3000);
+      return;
+    }
+    armed = null;
+    quotes = quotes.filter(function(x){ return x.id !== delId; });
+    if (activeId === delId) activeId = null;
+    paintSavedSelect();
+    render();
+    await persist();
+  }
+});
+
+Array.prototype.forEach.call(document.querySelectorAll("[data-lsort]"), function(b){
+  b.addEventListener("click", function(){
+    libSort = b.dataset.lsort;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-lsort]"), function(x){
+      x.setAttribute("aria-pressed", String(x === b));
+    });
+    render();
+  });
+});
+
+Array.prototype.forEach.call(document.querySelectorAll("[data-sort]"), function(b){
+  b.addEventListener("click", function(){
+    sortMode = b.dataset.sort;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-sort]"), function(x){
+      x.setAttribute("aria-pressed", String(x === b));
+    });
+    render();
+  });
+});
+
+/* ---- boot ---- */
+(async function(){
+  paintLegend();
+  await loadQuotes();
+  paintSavedSelect();
+  render();
+})();
+</script>
+</body>
+</html>
