@@ -456,9 +456,51 @@ function shippingOn(subtotal, cost, threshold){
 }
 function orderQty(){ return Math.max(1, parseInt(el.qty.value, 10) || 1); }
 
-/* ============ persistence ============ */
+/* ============ persistence ============
+   Three backends, picked automatically:
+   - "account"  window.storage, present when this page runs as a Claude artifact.
+                Quotes follow the account across sessions and devices.
+   - "browser"  localStorage, used only when window.storage is absent (self-hosted
+                or opened as a local file). Quotes live in that one browser.
+   - "session"  in-memory, the last resort so the page still works either way.     */
 const STORE_KEY = "vendor-quotes:v1";
-const hasStore = typeof window !== "undefined" && window.storage && typeof window.storage.get === "function";
+
+const store = (function(){
+  if (typeof window !== "undefined" && window.storage && typeof window.storage.get === "function"){
+    return {
+      mode: "account",
+      label: "saved to your account",
+      read: async function(){
+        try{
+          const r = await window.storage.get(STORE_KEY);
+          return r && r.value ? r.value : null;
+        }catch(e){ return null; }   /* key absent on first run */
+      },
+      write: async function(v){ await window.storage.set(STORE_KEY, v); }
+    };
+  }
+  let ls = null;
+  try{
+    ls = window.localStorage;
+    ls.setItem("__probe__", "1");
+    ls.removeItem("__probe__");
+  }catch(e){ ls = null; }
+  if (ls){
+    return {
+      mode: "browser",
+      label: "saved in this browser",
+      read: async function(){ try{ return ls.getItem(STORE_KEY); }catch(e){ return null; } },
+      write: async function(v){ ls.setItem(STORE_KEY, v); }
+    };
+  }
+  let mem = null;
+  return {
+    mode: "session",
+    label: "this session only",
+    read: async function(){ return mem; },
+    write: async function(v){ mem = v; }
+  };
+})();
 
 function flash(msg, warn){
   el.flash.textContent = msg;
@@ -467,21 +509,21 @@ function flash(msg, warn){
 }
 
 async function loadQuotes(){
-  if (!hasStore){ storageOK = false; return; }
   try{
-    const r = await window.storage.get(STORE_KEY);
-    quotes = r && r.value ? JSON.parse(r.value) : [];
+    const raw = await store.read();
+    const parsed = raw ? JSON.parse(raw) : [];
+    quotes = Array.isArray(parsed) ? parsed : [];
   }catch(e){
-    quotes = [];           /* first run: key does not exist yet */
+    quotes = [];
   }
+  storageOK = store.mode !== "session";
 }
 
 async function persist(){
-  if (!hasStore){ storageOK = false; flash("Kept for this session only", true); return; }
   try{
-    await window.storage.set(STORE_KEY, JSON.stringify(quotes));
-    storageOK = true;
-    flash("Saved");
+    await store.write(JSON.stringify(quotes));
+    storageOK = store.mode !== "session";
+    flash(storageOK ? "Saved" : "Kept for this session", !storageOK);
   }catch(e){
     storageOK = false;
     flash("Could not save \u2014 session only", true);
@@ -645,8 +687,8 @@ function paintLegend(){
 /* ============ library ============ */
 function paintLibrary(qty, ellaP, ellaCat){
   el.countTag.textContent = quotes.length
-    ? "\u00b7 " + quotes.length + (quotes.length === 1 ? " quote" : " quotes") + (storageOK ? "" : " \u00b7 not persisted")
-    : "";
+    ? "\u00b7 " + quotes.length + (quotes.length === 1 ? " quote" : " quotes") + " \u00b7 " + store.label
+    : "\u00b7 " + store.label;
 
   if (!quotes.length){
     el.libRows.innerHTML = '<tr><td colspan="10" class="empty">' +
